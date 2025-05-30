@@ -1,55 +1,350 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>localStorage Test</title>
-    <style>
-        body {
-            font-family: sans-serif;
-            padding: 2rem;
-            margin: 0;
-            background-color: #f9f9f9;
-        }
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Table Notes</title>
+  <style>
+    body {
+      font-family: sans-serif;
+      padding: 1rem;
+      background: #f0f0f0;
+    }
 
-        h1 {
-            text-align: center;
-            font-size: 1.8rem;
-        }
+    button {
+      width: 100%;
+      padding: 1rem;
+      margin-bottom: 1rem;
+      font-size: 1.1rem;
+      border: none;
+      background: #4CAF50;
+      color: white;
+      border-radius: 10px;
+    }
 
-        input, button {
-            width: 100%;
-            padding: 1rem;
-            margin-top: 1rem;
-            font-size: 1.1rem;
-            box-sizing: border-box;
-        }
+    .table-wrapper {
+      background: white;
+      padding: 1rem;
+      margin-bottom: 1rem;
+      border-radius: 10px;
+      box-shadow: 0 2px 6px rgba(0,0,0,0.1);
+      position: relative;
+    }
 
-        #output {
-            margin-top: 2rem;
-            font-size: 1.2rem;
-            text-align: center;
-        }
-    </style>
+    .table-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 0.5rem;
+    }
+
+    .table-title {
+      font-weight: bold;
+    }
+
+    .delete-table-btn {
+      padding: 0.3rem 0.8rem;
+      background: #f44336;
+      color: white;
+      border: none;
+      border-radius: 6px;
+      font-size: 0.9rem;
+      cursor: pointer;
+    }
+
+    .table-container {
+      position: relative;
+      display: inline-block;
+    }
+
+    .row-control {
+      position: absolute;
+      left: 50%;
+      bottom: -30px;
+      transform: translateX(-50%);
+      display: flex;
+      gap: 5px;
+    }
+
+    .col-control {
+      position: absolute;
+      top: 50%;
+      right: -30px;
+      transform: translateY(-50%);
+      display: flex;
+      flex-direction: column;
+      gap: 5px;
+    }
+
+    .control-flap {
+      width: 30px;
+      height: 30px;
+      background: #2196F3;
+      color: white;
+      border: none;
+      border-radius: 4px;
+      font-size: 1.2rem;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 0;
+    }
+
+    .control-flap.delete {
+      background: #f44336;
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+    }
+
+    td, th {
+      border: 1px solid #ccc;
+      padding: 0.5rem;
+      text-align: center;
+    }
+
+    input[type="text"] {
+      width: 100%;
+      border: none;
+      background: transparent;
+      text-align: center;
+    }
+
+    .table-controls {
+      margin-top: 0.5rem;
+      display: flex;
+      gap: 0.5rem;
+      flex-wrap: wrap;
+    }
+
+    .control-button {
+      flex: 1;
+      padding: 0.5rem;
+      background: #2196F3;
+      color: white;
+      border: none;
+      border-radius: 6px;
+      font-size: 0.9rem;
+    }
+
+    .delete-button {
+      background: #f44336;
+    }
+  </style>
 </head>
 <body>
-    <h1>localStorage Demo</h1>
-    <input type="text" id="inputValue" placeholder="Type something..." />
-    <button onclick="saveValue()">Save</button>
-    <button onclick="loadValue()">Load</button>
-    <p id="output"></p>
 
-    <script>
-        function saveValue() {
-            const value = document.getElementById("inputValue").value;
-            localStorage.setItem("myData", value);
-            alert("Value saved!");
-        }
+  <button onclick="addTable()">Add Table</button>
+  <div id="tables"></div>
 
-        function loadValue() {
-            const saved = localStorage.getItem("myData");
-            document.getElementById("output").innerText = "Stored value: " + (saved ?? "Nothing saved yet.");
+  <script>
+    let globalHeaders = ["Title 1", "Title 2", "Title 3"];
+    let tableData = [];
+
+    function createCell(content = "", onChange) {
+      const td = document.createElement("td");
+      const input = document.createElement("input");
+      input.type = "text";
+      input.value = content;
+      input.oninput = () => {
+        td.dataset.content = input.value;
+        if (onChange) onChange(input.value);
+      };
+      td.appendChild(input);
+      return td;
+    }
+
+    function addTable(existingData = null) {
+      const tableWrapper = document.createElement("div");
+      tableWrapper.className = "table-wrapper";
+
+      // Create header with title and delete button
+      const header = document.createElement("div");
+      header.className = "table-header";
+
+      const title = document.createElement("div");
+      title.className = "table-title";
+      const timestamp = existingData?.timestamp || new Date().toLocaleString('en-US', {
+        month: 'long',
+        day: 'numeric',
+        year: 'numeric',
+        hour: 'numeric',
+        minute: 'numeric',
+        hour12: true
+      });
+      title.textContent = timestamp;
+      header.appendChild(title);
+
+      const delTableBtn = document.createElement("button");
+      delTableBtn.className = "delete-table-btn";
+      delTableBtn.textContent = "Delete Table";
+      delTableBtn.onclick = () => {
+        if (confirm("Are you sure you want to delete this table?")) {
+          tableData = tableData.filter(t => t.timestamp !== timestamp);
+          tableWrapper.remove();
+          saveToLocalStorage();
         }
-    </script>
+      };
+      header.appendChild(delTableBtn);
+      tableWrapper.appendChild(header);
+
+      // Create table container for positioning controls
+      const tableContainer = document.createElement("div");
+      tableContainer.className = "table-container";
+
+      const table = document.createElement("table");
+      const tbody = document.createElement("tbody");
+
+      // Header row
+      const headerRow = document.createElement("tr");
+      globalHeaders.forEach((header, i) => {
+        const th = document.createElement("th");
+        const input = document.createElement("input");
+        input.type = "text";
+        input.value = header;
+        input.oninput = (e) => {
+          const newHeader = e.target.value;
+          globalHeaders[i] = newHeader;
+          updateAllHeaders();
+          saveToLocalStorage();
+        };
+        th.appendChild(input);
+        headerRow.appendChild(th);
+      });
+      tbody.appendChild(headerRow);
+
+      const rows = existingData?.rows || Array(2).fill().map(() => Array(globalHeaders.length).fill(""));
+
+      rows.forEach((rowData, rowIndex) => {
+        const row = document.createElement("tr");
+        rowData.forEach((cellData, colIndex) => {
+          row.appendChild(createCell(cellData, (newVal) => {
+            tableData.find(t => t.timestamp === timestamp).rows[rowIndex][colIndex] = newVal;
+            saveToLocalStorage();
+          }));
+        });
+        tbody.appendChild(row);
+      });
+
+      table.appendChild(tbody);
+      tableContainer.appendChild(table);
+
+      // Add row controls (flaps below table)
+      const rowControls = document.createElement("div");
+      rowControls.className = "row-control";
+      
+      const addRowBtn = document.createElement("button");
+      addRowBtn.className = "control-flap";
+      addRowBtn.textContent = "+";
+      addRowBtn.onclick = () => {
+        const row = document.createElement("tr");
+        const newRow = [];
+        for (let j = 0; j < globalHeaders.length; j++) {
+          const cell = createCell("", (val) => {
+            newRow[j] = val;
+            saveToLocalStorage();
+          });
+          row.appendChild(cell);
+          newRow.push("");
+        }
+        tbody.appendChild(row);
+        const targetTable = tableData.find(t => t.timestamp === timestamp);
+        targetTable.rows.push(newRow);
+        saveToLocalStorage();
+      };
+      rowControls.appendChild(addRowBtn);
+
+      const delRowBtn = document.createElement("button");
+      delRowBtn.className = "control-flap delete";
+      delRowBtn.textContent = "-";
+      delRowBtn.onclick = () => {
+        if (tbody.rows.length > 1) {
+          tbody.deleteRow(tbody.rows.length - 1);
+          tableData.find(t => t.timestamp === timestamp).rows.pop();
+          saveToLocalStorage();
+        }
+      };
+      rowControls.appendChild(delRowBtn);
+      tableContainer.appendChild(rowControls);
+
+      // Add column controls (flaps on right side)
+      const colControls = document.createElement("div");
+      colControls.className = "col-control";
+      
+      const addColBtn = document.createElement("button");
+      addColBtn.className = "control-flap";
+      addColBtn.textContent = "+";
+      addColBtn.onclick = () => {
+        globalHeaders.push("New");
+        tableData.forEach(t => t.rows.forEach(r => r.push("")));
+        updateAllTables();
+        saveToLocalStorage();
+      };
+      colControls.appendChild(addColBtn);
+
+      const delColBtn = document.createElement("button");
+      delColBtn.className = "control-flap delete";
+      delColBtn.textContent = "-";
+      delColBtn.onclick = () => {
+        if (globalHeaders.length > 1) {
+          globalHeaders.pop();
+          tableData.forEach(t => t.rows.forEach(r => r.pop()));
+          updateAllTables();
+          saveToLocalStorage();
+        }
+      };
+      colControls.appendChild(delColBtn);
+      tableContainer.appendChild(colControls);
+
+      tableWrapper.appendChild(tableContainer);
+      document.getElementById("tables").appendChild(tableWrapper);
+
+      // Save this table if it's new
+      if (!existingData) {
+        const newTable = {
+          timestamp: timestamp,
+          rows: rows.map(row => [...row])
+        };
+        tableData.push(newTable);
+        saveToLocalStorage();
+      }
+    }
+
+    function updateAllHeaders() {
+      document.querySelectorAll("table").forEach((table, i) => {
+        const headerRow = table.rows[0];
+        [...headerRow.cells].forEach((cell, j) => {
+          cell.querySelector("input").value = globalHeaders[j] ?? "";
+        });
+      });
+    }
+
+    function updateAllTables() {
+      const tablesContainer = document.getElementById("tables");
+      tablesContainer.innerHTML = "";
+      tableData.forEach(data => addTable(data));
+    }
+
+    function saveToLocalStorage() {
+      localStorage.setItem("tableHeaders", JSON.stringify(globalHeaders));
+      localStorage.setItem("tableData", JSON.stringify(tableData));
+    }
+
+    function loadFromLocalStorage() {
+      const headers = localStorage.getItem("tableHeaders");
+      const data = localStorage.getItem("tableData");
+      if (headers && data) {
+        globalHeaders = JSON.parse(headers);
+        tableData = JSON.parse(data);
+        updateAllTables();
+      }
+    }
+
+    // Load on startup
+    loadFromLocalStorage();
+  </script>
 </body>
 </html>
