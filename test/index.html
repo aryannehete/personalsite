@@ -25,10 +25,11 @@
     .table-wrapper {
       background: white;
       padding: 1rem;
-      margin-bottom: 1rem;
+      margin-bottom: 2rem;
       border-radius: 10px;
       box-shadow: 0 2px 6px rgba(0,0,0,0.1);
       position: relative;
+      overflow: visible;
     }
 
     .table-header {
@@ -53,6 +54,9 @@
       font-size: 0.85rem;
       cursor: pointer;
       transition: background-color 0.2s;
+      width: 20%;
+      box-sizing: border-box;
+      text-align: center;
     }
 
     .delete-table-btn:hover {
@@ -61,35 +65,33 @@
 
     .table-container {
       position: relative;
-      display: inline-block;
-      margin-bottom: 45px;
+      display: block;
       margin-right: 35px;
       width: 100%;
+      box-sizing: border-box;
     }
 
-    .row-control {
-      position: absolute;
-      left: 50%;
-      bottom: -40px;
-      transform: translateX(-50%);
+    .table-flex-group {
       display: flex;
-      gap: 5px;
-      z-index: 1;
-      background: white;
-      padding: 5px;
+      flex-direction: row;
+      align-items: stretch;
+      width: 100%;
     }
-
-    .col-control {
-      position: absolute;
-      top: 50%;
-      right: -35px;
-      transform: translateY(-50%);
+    .col-controls-vertical {
       display: flex;
       flex-direction: column;
-      gap: 5px;
-      z-index: 1;
+      justify-content: center;
+      gap: 8px;
+      margin-left: 8px;
     }
-
+    .row-controls-horizontal {
+      display: flex;
+      flex-direction: row;
+      justify-content: center;
+      gap: 8px;
+      margin-top: 12px;
+      margin-bottom: -16px;
+    }
     .control-flap {
       width: 30px;
       height: 30px;
@@ -105,7 +107,6 @@
       padding: 0;
       transition: background-color 0.2s;
     }
-
     .control-flap:hover {
       background: #e0e0e0;
     }
@@ -118,6 +119,7 @@
     table {
       width: 100%;
       border-collapse: collapse;
+      margin-bottom: 0;
     }
 
     td, th {
@@ -202,9 +204,9 @@
       header.appendChild(delTableBtn);
       tableWrapper.appendChild(header);
 
-      // Create table container for positioning controls
-      const tableContainer = document.createElement("div");
-      tableContainer.className = "table-container";
+      // Create table flex group for table and column controls
+      const tableFlexGroup = document.createElement("div");
+      tableFlexGroup.className = "table-flex-group";
 
       const table = document.createElement("table");
       const tbody = document.createElement("tbody");
@@ -241,15 +243,49 @@
       });
 
       table.appendChild(tbody);
-      tableContainer.appendChild(table);
+      tableFlexGroup.appendChild(table);
 
-      // Add row controls (flaps below table)
+      // Column controls (vertical, right of table)
+      const colControls = document.createElement("div");
+      colControls.className = "col-controls-vertical";
+      const addColBtn = document.createElement("button");
+      addColBtn.className = "control-flap";
+      addColBtn.textContent = "+";
+      addColBtn.title = "Add Column";
+      addColBtn.onclick = () => {
+        globalHeaders.push("New");
+        tableData.forEach(t => t.rows.forEach(r => r.push("")));
+        updateAllTables();
+        saveToLocalStorage();
+      };
+      colControls.appendChild(addColBtn);
+      const delColBtn = document.createElement("button");
+      delColBtn.className = "control-flap";
+      delColBtn.textContent = "-";
+      delColBtn.title = "Delete Column";
+      delColBtn.onclick = () => {
+        if (globalHeaders.length > 1) {
+          globalHeaders.pop();
+          tableData.forEach(t => t.rows.forEach(r => r.pop()));
+          updateAllTables();
+          saveToLocalStorage();
+        }
+      };
+      colControls.appendChild(delColBtn);
+      tableFlexGroup.appendChild(colControls);
+
+      // Add tableFlexGroup to container
+      const tableContainer = document.createElement("div");
+      tableContainer.className = "table-container";
+      tableContainer.appendChild(tableFlexGroup);
+
+      // Row controls (horizontal, below table)
       const rowControls = document.createElement("div");
-      rowControls.className = "row-control";
-      
+      rowControls.className = "row-controls-horizontal";
       const addRowBtn = document.createElement("button");
       addRowBtn.className = "control-flap";
       addRowBtn.textContent = "+";
+      addRowBtn.title = "Add Row";
       addRowBtn.onclick = () => {
         const row = document.createElement("tr");
         const newRow = [];
@@ -267,10 +303,10 @@
         saveToLocalStorage();
       };
       rowControls.appendChild(addRowBtn);
-
       const delRowBtn = document.createElement("button");
-      delRowBtn.className = "control-flap delete";
+      delRowBtn.className = "control-flap";
       delRowBtn.textContent = "-";
+      delRowBtn.title = "Delete Row";
       delRowBtn.onclick = () => {
         if (tbody.rows.length > 1) {
           tbody.deleteRow(tbody.rows.length - 1);
@@ -280,35 +316,6 @@
       };
       rowControls.appendChild(delRowBtn);
       tableContainer.appendChild(rowControls);
-
-      // Add column controls (flaps on right side)
-      const colControls = document.createElement("div");
-      colControls.className = "col-control";
-      
-      const addColBtn = document.createElement("button");
-      addColBtn.className = "control-flap";
-      addColBtn.textContent = "+";
-      addColBtn.onclick = () => {
-        globalHeaders.push("New");
-        tableData.forEach(t => t.rows.forEach(r => r.push("")));
-        updateAllTables();
-        saveToLocalStorage();
-      };
-      colControls.appendChild(addColBtn);
-
-      const delColBtn = document.createElement("button");
-      delColBtn.className = "control-flap delete";
-      delColBtn.textContent = "-";
-      delColBtn.onclick = () => {
-        if (globalHeaders.length > 1) {
-          globalHeaders.pop();
-          tableData.forEach(t => t.rows.forEach(r => r.pop()));
-          updateAllTables();
-          saveToLocalStorage();
-        }
-      };
-      colControls.appendChild(delColBtn);
-      tableContainer.appendChild(colControls);
 
       tableWrapper.appendChild(tableContainer);
       document.getElementById("tables").appendChild(tableWrapper);
