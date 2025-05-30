@@ -1,10 +1,26 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <title>My Simple Site</title>
+    <title>localStorage Test</title>
 </head>
 <body>
-    <h1>Welcome to My Website</h1>
-    <p>This is a simple HTML page with some sample text.</p>
+    <h1>localStorage Demo</h1>
+    <input type="text" id="inputValue" placeholder="Type something..." />
+    <button onclick="saveValue()">Save</button>
+    <button onclick="loadValue()">Load</button>
+    <p id="output"></p>
+
+    <script>
+        function saveValue() {
+            const value = document.getElementById("inputValue").value;
+            localStorage.setItem("myData", value);
+            alert("Value saved!");
+        }
+
+        function loadValue() {
+            const saved = localStorage.getItem("myData");
+            document.getElementById("output").innerText = "Stored value: " + (saved ?? "Nothing saved yet.");
+        }
+    </script>
 </body>
 </html>
