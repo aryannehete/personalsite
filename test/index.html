@@ -2,10 +2,33 @@
 <html lang="en">
 <head>
   <meta charset="utf-8" />
-  <title>Redirecting to PDF…</title>
-  <meta http-equiv="refresh" content="0; url=https://arxiv.org/pdf/2105.02784" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>View PDF</title>
+  <link rel="icon" href="data:," />
+  <style>
+    html, body {
+      margin: 0;
+      height: 100%;
+      display: flex;
+      flex-direction: column;
+    }
+    header {
+      padding: 1rem;
+      background: #333;
+      color: white;
+      font-family: system-ui, sans-serif;
+    }
+    iframe {
+      flex: 1;
+      width: 100%;
+      border: none;
+    }
+  </style>
 </head>
 <body>
-  <p>If you are not redirected automatically, <a href="https://arxiv.org/pdf/2105.02784">click here to open the PDF</a>.</p>
+  <header>
+    <h1>PDF Viewer</h1>
+  </header>
+  <iframe src="your-file.pdf"></iframe>
 </body>
 </html>
