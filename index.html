@@ -1,23 +1,90 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Coming Soon</title>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Aryan Nehete</title>
   <style>
     body {
       margin: 0;
-      height: 100vh;
-      display: flex;
-      justify-content: center;
-      align-items: center;
       background-color: white;
       font-family: 'Georgia', serif;
       font-weight: 300;
+      padding: 0;
+      line-height: 1.6;
+    }
+    .container {
+      max-width: 66.67%; /* Two-thirds of the viewport width */
+      margin: 0 auto; /* Center the container */
+      padding: 20px;
+      box-sizing: border-box;
+    }
+    h1 {
+      margin-top: 20px;
+      margin-bottom: 10px;
+      font-size: 2em;
+      font-weight: normal;
+    }
+    h2 {
+      margin-top: 20px;
+      margin-bottom: 10px;
+      font-size: 1.5em;
+      font-weight: normal;
+    }
+    h3 {
+      margin-top: 15px;
+      margin-bottom: 8px;
+      font-size: 1.2em;
+      font-weight: normal;
+      color: #444;
+    }
+    section {
+      margin-bottom: 30px;
     }
   </style>
 </head>
 <body>
-  <div>Coming soon..</div>
+  <div class="container">
+    <section>
+      <h1>Aryan Nehete</h1>
+      <p>Third year <a href="https://engsci.utoronto.ca/program/what-is-engsci/" target="_blank" style="color: black; text-decoration: underline;">EngSci</a> student @ UofT: <a href="https://engsci.utoronto.ca/program/majors/engineering-mathematics-statistics-and-finance/" target="_blank" style="color: black; text-decoration: underline;">Financial Engineering</a> Major + AI Minor, looking for 12-16 month PEY.</p>
+      <p>Relevant Courses: Engineering Finance & Economics, Financial Principles II, Financial Optimization Models, Economic Analysis & Decision Making, Financial Engineering, Mathematical Programming, Fundamentals of Deep Learning, Praxis (Engineering Design).</p>
+    </section>
+
+    <section id="current">
+      <h2>Current Work</h2>
+      <h3>Teaching Assistant @ UofT (Sept. 2025 - Present)</h3>
+      <p>TA for ESC180 Intro to Computer Programming under Prof. Guerzhoy.</p>
+      <p>Lead lab practicals, guide students in learning Python fundamentals, help students analyze efficiency of algorithms.</p>
+    </section>
+
+    <section id="past">
+        <h2>Past Experience</h2>
+        <h3>Freelance Tutor (2023 - 2025 May-Aug. each year)</h3>
+        <p>Tutored grade 11, 12 and first year university students in calculus, linear algebra, and computer science.</p>
+        <p>Delivered tailored & interactive lessons, strenthened conceptual understanding, and leveraged AI to create personalized problemsets.</p>
+    </section>
+
+
+    <section id="other">
+      <h2>Other Work</h2>
+      <h3><a href="https://aryann.xyz/aps360" target="_blank" style="color: #444; text-decoration: underline;">Handwriting to LaTeX</a></h3>
+      <p>Trained a CNN encoder + Transformer decoder to convert handwritten math expressions to LaTeX code.</p>
+      <p>Optimized training with PyTorch and various algorithms, achieving a BLEU score of 0.71.</p>
+      <h3>Case Competitions</h3>
+      <p>2nd place at Deloitte x UTESCA Ace the Case, recommending a project management system to a construction company. <a href="https://aryann.xyz/acethecase" target="_blank" style="color: black; text-decoration: underline;">Slide Deck</a>.</p>
+    </section>
+
+    <section id="education">
+      <h2>Education</h2>
+      <p>University of Toronto · BASc in Engineering Science - Engineering Mathematics, Statistics, and Finance Major + Artificial Intelligence Minor · Expected 2028</p>
+      <p>Dean's Honours List Scholar, cGPA: 3.61</p>
+    </section>
+
+    <section id="contact">
+      <h2>Contact</h2>
+      <p>nehetearyan@gmail.com</p>
+    </section>
+  </div>
 </body>
-</html> 
+</html>
